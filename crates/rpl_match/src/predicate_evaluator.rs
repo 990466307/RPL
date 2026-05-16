@@ -29,7 +29,7 @@ pub struct PredicateEvaluator<'e, 'm, 'tcx> {
     body: &'e mir::Body<'tcx>,
     label_map: &'e LabelMap,
     matched: &'e Matched<'tcx>,
-    body_cache: &'e BodyInfoCache,
+    body_cache: &'e BodyInfoCache<'tcx>,
     symbol_table: &'e pat::FnSymbolTable<'m>,
 }
 
@@ -40,7 +40,7 @@ impl<'e, 'm, 'tcx> PredicateEvaluator<'e, 'm, 'tcx> {
         body: &'e mir::Body<'tcx>,
         label_map: &'e LabelMap,
         matched: &'e Matched<'tcx>,
-        body_cache: &'e BodyInfoCache,
+        body_cache: &'e BodyInfoCache<'tcx>,
         symbol_table: &'e pat::FnSymbolTable<'m>,
     ) -> Self {
         Self {
@@ -173,6 +173,71 @@ impl<'e, 'm, 'tcx> PredicateEvaluator<'e, 'm, 'tcx> {
                         p(self.tcx, self.typing_env, self.body, self.body_cache, *local)
                     },
                     _ => panic!("PredicateArgInstance::Local expected, got {:?}", arg_instance[0]),
+                }
+            },
+            PredicateKind::LocationLocal(p) => {
+                assert!(
+                    arg_instance.len() == 2,
+                    "PredicateKind::LocationLocal should have exactly two arguments"
+                );
+                match (&arg_instance[0], &arg_instance[1]) {
+                    (PredicateArgInstance::Location(location), PredicateArgInstance::Local(local)) => {
+                        p(self.tcx, self.typing_env, self.body, self.body_cache, *location, *local)
+                    },
+                    _ => panic!(
+                        "PredicateArgInstance::Location and PredicateArgInstance::Local expected, got {:?} and {:?}",
+                        &arg_instance[0], &arg_instance[1]
+                    ),
+                }
+            },
+            PredicateKind::LocationLocalConst(p) => {
+                assert!(
+                    arg_instance.len() == 3,
+                    "PredicateKind::LocationLocalConst should have exactly three arguments"
+                );
+                match (&arg_instance[0], &arg_instance[1], &arg_instance[2]) {
+                    (
+                        PredicateArgInstance::Location(location),
+                        PredicateArgInstance::Local(local),
+                        PredicateArgInstance::Const(konst),
+                    ) => p(
+                        self.tcx,
+                        self.typing_env,
+                        self.body,
+                        self.body_cache,
+                        *location,
+                        *local,
+                        *konst,
+                    ),
+                    _ => panic!(
+                        "PredicateArgInstance::Location, PredicateArgInstance::Local and PredicateArgInstance::Const expected, got {:?}, {:?} and {:?}",
+                        &arg_instance[0], &arg_instance[1], &arg_instance[2]
+                    ),
+                }
+            },
+            PredicateKind::LocationLocalLocal(p) => {
+                assert!(
+                    arg_instance.len() == 3,
+                    "PredicateKind::LocationLocalLocal should have exactly three arguments"
+                );
+                match (&arg_instance[0], &arg_instance[1], &arg_instance[2]) {
+                    (
+                        PredicateArgInstance::Location(location),
+                        PredicateArgInstance::Local(local1),
+                        PredicateArgInstance::Local(local2),
+                    ) => p(
+                        self.tcx,
+                        self.typing_env,
+                        self.body,
+                        self.body_cache,
+                        *location,
+                        *local1,
+                        *local2,
+                    ),
+                    _ => panic!(
+                        "PredicateArgInstance::Location, PredicateArgInstance::Local and PredicateArgInstance::Local expected, got {:?}, {:?} and {:?}",
+                        &arg_instance[0], &arg_instance[1], &arg_instance[2]
+                    ),
                 }
             },
         };

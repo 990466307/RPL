@@ -374,6 +374,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "core"
+version = "0.1.0"
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -513,6 +517,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.98",
+]
+
+[[package]]
+name = "domains"
+version = "0.1.0"
+dependencies = [
+ "core",
 ]
 
 [[package]]
@@ -1539,7 +1550,9 @@ dependencies = [
 name = "rpl_constraints"
 version = "0.1.0"
 dependencies = [
+ "core",
  "derive_more",
+ "domains",
  "pretty_assertions",
  "proc-macro2",
  "quote",

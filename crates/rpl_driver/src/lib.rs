@@ -165,7 +165,7 @@ pub fn check_crate<'tcx, 'pcx, 'mcx: 'pcx>(tcx: TyCtxt<'tcx>, pcx: PatCtxt<'pcx>
 struct CheckFnCtxt<'pcx, 'tcx> {
     tcx: TyCtxt<'tcx>,
     pcx: PatCtxt<'pcx>,
-    body_caches: RefCell<FxHashMap<DefId, BodyInfoCache>>,
+    body_caches: RefCell<FxHashMap<DefId, BodyInfoCache<'tcx>>>,
 }
 
 impl<'tcx> Visitor<'tcx> for CheckFnCtxt<'_, 'tcx> {

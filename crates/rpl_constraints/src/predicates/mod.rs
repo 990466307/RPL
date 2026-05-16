@@ -8,9 +8,11 @@ use rustc_span::Symbol;
 // Attention:
 // When you add a new module here,
 // Try to keep all predicate signatures consistent in it.
+mod internval_analysis;
 mod locals;
 mod multiple_consts;
 mod multiple_tys;
+mod null_analysis;
 mod single_const;
 mod single_fn;
 mod single_ty;
@@ -78,6 +80,12 @@ pub const ALL_PREDICATES: &[&str] = &[
     "usize_lt",
     // single_local_preds
     "is_null",
+    "is_null_mirsa",
+    // local_const_preds
+    "eq_const",
+    "lt_const",
+    "gt_const",
+    "index_in_bounds",
     // multiple_locals_preds
     "product_of",
 ];
@@ -93,6 +101,9 @@ pub enum PredicateKind {
     SingleConst(SingleConstPredsFnPtr),
     MultipleConsts(MultipleConstsPredsFnPtr),
     SingleLocal(SingleLocalPredsFnPtr),
+    LocationLocal(LocationLocalPredsFnPtr),
+    LocationLocalConst(LocationLocalConstPredsFnPtr),
+    LocationLocalLocal(LocationLocalLocalPredsFnPtr),
     MultipleLocals(MultipleLocalsPredsFnPtr),
 }
 
@@ -128,6 +139,11 @@ impl<'i> TryFrom<SpanWrapper<'i>> for PredicateKind {
             "usize_lt" => Self::MultipleConsts(usize_lt),
             "product_of" => Self::MultipleLocals(product_of),
             "is_null" => Self::SingleLocal(is_null),
+            "is_null_mirsa" => Self::LocationLocal(is_null_mirsa_pred),
+            "eq_const" => Self::LocationLocalConst(eq_const),
+            "lt_const" => Self::LocationLocalConst(lt_const),
+            "gt_const" => Self::LocationLocalConst(gt_const),
+            "index_in_bounds" => Self::LocationLocalLocal(index_in_bounds),
             _ => {
                 return Err(PredicateError::InvalidPredicate {
                     pred: span.inner().as_str(),
