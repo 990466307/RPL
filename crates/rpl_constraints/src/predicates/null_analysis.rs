@@ -1,7 +1,7 @@
-use mirsa_core::cfg::build_cfg;
-use mirsa_core::mir::{collect_ptr_places, collect_ref_places};
-use mirsa_domains::framework::forward::{PathForwardAnalysisConfig, PathForwardAnalysisResult};
-use mirsa_domains::nullptr::{NullPtr, NullPtrState, analyze_nullptr, query_nullptr_before_location};
+use mirsa::core::cfg::build_cfg;
+use mirsa::core::mir::collect_body_places;
+use mirsa::domains::framework::forward::{PathForwardAnalysisConfig, PathForwardAnalysisResult};
+use mirsa::domains::nullptr::{NullPtr, NullPtrState, analyze_nullptr, query_nullptr_before_location};
 use rustc_middle::mir;
 use rustc_middle::ty::TyCtxt;
 
@@ -11,14 +11,13 @@ pub(crate) fn analyze_null_mirsa<'tcx>(
     body: &mir::Body<'tcx>,
 ) -> PathForwardAnalysisResult<NullPtrState<'tcx>> {
     let cfg = build_cfg(body);
-    let ptr_places = collect_ptr_places(tcx, body);
-    let ref_places = collect_ref_places(tcx, body);
+    let places = collect_body_places(tcx, body);
     analyze_nullptr(
         tcx,
         body,
         &cfg,
-        &ptr_places,
-        &ref_places,
+        &places,
+        false,
         PathForwardAnalysisConfig {
             max_paths: 128,
             widen_after_iterations: None,
@@ -38,10 +37,8 @@ pub(crate) fn is_null_mirsa<'tcx>(
     };
     let place = mir::Place::from(local);
     let value = state
-        .refs
-        .get(&place)
-        .copied()
-        .or_else(|| state.pointers.get(&place).copied())
+        .access_path_for_place(place)
+        .map(|path| state.value_or_maybe(&path))
         .unwrap_or(NullPtr::Bot);
     matches!(value, NullPtr::Null)
 }

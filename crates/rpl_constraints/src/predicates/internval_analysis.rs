@@ -1,7 +1,7 @@
-use mirsa_core::cfg::build_cfg;
-use mirsa_core::mir::collect_body_places;
-use mirsa_domains::framework::forward::{PathForwardAnalysisConfig, PathForwardAnalysisResult};
-use mirsa_domains::internval::{InternvalState, analyze_internval, query_internval_before_location};
+use mirsa::core::cfg::build_cfg;
+use mirsa::core::mir::collect_body_places;
+use mirsa::domains::framework::forward::{PathForwardAnalysisConfig, PathForwardAnalysisResult};
+use mirsa::domains::internval::{InternvalState, analyze_internval, query_internval_before_location};
 use rustc_middle::mir;
 use rustc_middle::ty::{TyCtxt, TyKind, TypingEnv};
 
@@ -152,13 +152,13 @@ fn local_len<'tcx>(
     let len_iv = match ty.kind() {
         TyKind::Array(_, len) => len
             .try_to_target_usize(tcx)
-            .map(|len| mirsa_domains::internval::Internval::new(len as i128, len as i128)),
-        TyKind::Slice(_) => state.get_slice_meta(&place),
+            .map(|len| mirsa::domains::internval::Internval::new(len as i128, len as i128)),
+        TyKind::Slice(_) => state.get_len(&place),
         TyKind::Ref(_, inner, _) => match inner.kind() {
             TyKind::Array(_, len) => len
                 .try_to_target_usize(tcx)
-                .map(|len| mirsa_domains::internval::Internval::new(len as i128, len as i128)),
-            TyKind::Slice(_) => state.get_slice_meta(&place),
+                .map(|len| mirsa::domains::internval::Internval::new(len as i128, len as i128)),
+            TyKind::Slice(_) => state.get_len(&place),
             _ => None,
         },
         _ => None,

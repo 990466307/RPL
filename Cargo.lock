@@ -374,10 +374,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "core"
-version = "0.1.0"
-
-[[package]]
 name = "cpufeatures"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -517,13 +513,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.98",
-]
-
-[[package]]
-name = "domains"
-version = "0.1.0"
-dependencies = [
- "core",
 ]
 
 [[package]]
@@ -1106,6 +1095,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "mirsa"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f86b649760a61263786244412642562c89543157058595afe4127739d84ddc22"
+dependencies = [
+ "mirsa-core",
+ "mirsa-domains",
+]
+
+[[package]]
+name = "mirsa-core"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b0ac96453393903dd157adbf27682780a5af9e58c0d1f91a6ce0d4a6c195ba9"
+
+[[package]]
+name = "mirsa-domains"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a34e186e318639c35c6dac2f51c4f08e43d4e9cb6123e4891060584b12e1e5f"
+dependencies = [
+ "mirsa-core",
+]
+
+[[package]]
 name = "nom"
 version = "7.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1550,9 +1564,8 @@ dependencies = [
 name = "rpl_constraints"
 version = "0.1.0"
 dependencies = [
- "core",
  "derive_more",
- "domains",
+ "mirsa",
  "pretty_assertions",
  "proc-macro2",
  "quote",

@@ -1,9 +1,10 @@
 use std::cell::OnceCell;
 use std::fmt;
 
-use mirsa_domains::framework::forward::PathForwardAnalysisResult;
-use mirsa_domains::internval::InternvalState;
-use mirsa_domains::nullptr::NullPtrState;
+use mirsa::domains::framework::forward::PathForwardAnalysisResult;
+use mirsa::domains::framework::printer::StateEntries;
+use mirsa::domains::internval::InternvalState;
+use mirsa::domains::nullptr::NullPtrState;
 use rustc_index::IndexVec;
 use rustc_middle::mir::{self};
 use rustc_middle::ty::{self, TyCtxt, TypingEnv};
@@ -47,15 +48,9 @@ impl fmt::Debug for BodyInfoCache<'_> {
                 f.debug_list()
                     .entries(result.out_states.iter().enumerate().flat_map(|(bb, state)| {
                         state
-                            .pointers
-                            .iter()
-                            .map(move |(place, value)| (bb, place.local.as_usize(), format!("{value:?}")))
-                            .chain(
-                                state
-                                    .refs
-                                    .iter()
-                                    .map(move |(place, value)| (bb, place.local.as_usize(), format!("{value:?}"))),
-                            )
+                            .entries()
+                            .into_iter()
+                            .map(move |(place, value)| (bb, place.local.as_usize(), value))
                     }))
                     .finish()
             }

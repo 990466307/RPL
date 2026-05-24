@@ -82,5 +82,7 @@ pub fn patterns() -> Vec<(&'static str, &'static str)> {
         "ub/private-or-generic-function-marked-inline.rpl",
         "ub/transmute-int-to-ptr.rpl",
         "ub/transmute-to-bool.rpl",
+        // Safety requirements
+        "sr/null-pointer-preconditions.rpl",
     ]
 }

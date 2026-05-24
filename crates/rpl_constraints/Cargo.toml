@@ -14,8 +14,7 @@ rpl_resolve.workspace = true
 
 derive_more.workspace = true
 thiserror.workspace = true
-mirsa_core = { package = "core", path = "../../third_party/mirsa/crates/core" }
-mirsa_domains = { package = "domains", path = "../../third_party/mirsa/crates/domains" }
+mirsa.workspace = true
 
 [dev-dependencies]
 pretty_assertions.workspace = true

@@ -71,6 +71,8 @@ pub fn patterns() -> Vec<(&'static str, &'static str)> {{
     collect_patterns(&patterns_dir.join("cve"), "cve", &mut out);
     writeln!(out, r"        // Common patterns based on Rust's UB").unwrap();
     collect_patterns(&patterns_dir.join("ub"), "ub", &mut out);
+    writeln!(out, r"        // Safety requirements").unwrap();
+    collect_patterns(&patterns_dir.join("sr"), "sr", &mut out);
     writeln!(out, "    ]").unwrap();
     writeln!(out, "}}").unwrap();
 }
