@@ -26,8 +26,10 @@ pub fn patterns() -> Vec<(&'static str, &'static str)> {
         // ensure that its order matches the file system's order.
         // (To ensure consistency of output information during testing)
         // Clippy lints
+        "clippy/bytes-count-to-len.rpl",
         "clippy/cast-slice-different-sizes.rpl",
         "clippy/cast-slice-from-raw-parts.rpl",
+        "clippy/duration-subsec.rpl",
         "clippy/eager-transmute.rpl",
         "clippy/from-raw-with-void-ptr.rpl",
         "clippy/mem-replace-with-uninit.rpl",
@@ -35,6 +37,7 @@ pub fn patterns() -> Vec<(&'static str, &'static str)> {
         "clippy/not-unsafe-ptr-arg-deref.rpl",
         "clippy/ptr-offset-with-cast.rpl",
         "clippy/size-of-in-element-count.rpl",
+        "clippy/string-from-utf8-as-bytes.rpl",
         "clippy/swap-ptr-to-ref.rpl",
         "clippy/transmute-int-to-non-zero.rpl",
         "clippy/transmute-null-to-fn.rpl",
